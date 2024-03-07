@@ -140,52 +140,52 @@ public class CleanServices {
 		}
 	}
 	
-	public static void readExcelData() {
-		try {
-			File file = new File(System.getProperty("user.dir") + "\\CleanupDriver.xlsx");
-			FileInputStream fis = new FileInputStream(file);
-			// creating Workbook instance that refers to .xlsx file
-			XSSFWorkbook wb = new XSSFWorkbook(fis);
-			XSSFSheet sheet = wb.getSheetAt(0);
-			int rowTotal = sheet.getLastRowNum() + 1;
-			
-			String environment = wb.getSheetAt(0).getRow(1).getCell(1).getStringCellValue();
-			String cleanBothActAsri = wb.getSheetAt(0).getRow(1).getCell(2).getStringCellValue();
-			String cleanOnlyAct = wb.getSheetAt(0).getRow(1).getCell(3).getStringCellValue();
-			String cleanOnlyAsri = wb.getSheetAt(0).getRow(1).getCell(4).getStringCellValue();			
-			String inventoryType = wb.getSheetAt(0).getRow(1).getCell(5).getStringCellValue();
-			
-
-			if(cleanBothActAsri.equalsIgnoreCase("yes")) {
-				System.out.println("Cleanup started for both ACT and ASRI for Environment::"+environment);
-				for (int i = 1; i < rowTotal; i++) {
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-					System.out.println("CLEANUP Started for SERVICE ID :: " + wb.getSheetAt(0).getRow(i).getCell(0));
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-					String service = wb.getSheetAt(0).getRow(i).getCell(0).getStringCellValue();
-					cleanViaExcelData(service, environment);
-
-				}
-			} 
-			
-			
-			if(cleanOnlyAct.equalsIgnoreCase("yes")) {
-				System.out.println("Cleanup started for ACT only");
-			}
-			
-			if(cleanOnlyAsri.equalsIgnoreCase("yes")) {
-				System.out.println("Cleanup started for Asri only");
-			}
-
-			
-			
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
-		
-
-	}
+//	public static void readExcelData() {
+//		try {
+//			File file = new File(System.getProperty("user.dir") + "\\CleanupDriver.xlsx");
+//			FileInputStream fis = new FileInputStream(file);
+//			// creating Workbook instance that refers to .xlsx file
+//			XSSFWorkbook wb = new XSSFWorkbook(fis);
+//			XSSFSheet sheet = wb.getSheetAt(0);
+//			int rowTotal = sheet.getLastRowNum() + 1;
+//			
+//			String environment = wb.getSheetAt(0).getRow(1).getCell(1).getStringCellValue();
+//			String cleanBothActAsri = wb.getSheetAt(0).getRow(1).getCell(2).getStringCellValue();
+//			String cleanOnlyAct = wb.getSheetAt(0).getRow(1).getCell(3).getStringCellValue();
+//			String cleanOnlyAsri = wb.getSheetAt(0).getRow(1).getCell(4).getStringCellValue();			
+//			String inventoryType = wb.getSheetAt(0).getRow(1).getCell(5).getStringCellValue();
+//			
+//
+//			if(cleanBothActAsri.equalsIgnoreCase("yes")) {
+//				System.out.println("Cleanup started for both ACT and ASRI for Environment::"+environment);
+//				for (int i = 1; i < rowTotal; i++) {
+//					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//					System.out.println("CLEANUP Started for SERVICE ID :: " + wb.getSheetAt(0).getRow(i).getCell(0));
+//					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//					String service = wb.getSheetAt(0).getRow(i).getCell(0).getStringCellValue();
+//					cleanViaExcelData(service, environment);
+//
+//				}
+//			} 
+//			
+//			
+//			if(cleanOnlyAct.equalsIgnoreCase("yes")) {
+//				System.out.println("Cleanup started for ACT only");
+//			}
+//			
+//			if(cleanOnlyAsri.equalsIgnoreCase("yes")) {
+//				System.out.println("Cleanup started for Asri only");
+//			}
+//
+//			
+//			
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}		
+//		
+//
+//	}
 	
 	
 	public static void cleanViaExcelData(String service, String env) {
