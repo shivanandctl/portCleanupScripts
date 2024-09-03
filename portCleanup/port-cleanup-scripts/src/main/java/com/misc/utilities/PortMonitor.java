@@ -1,6 +1,6 @@
 package com.misc.utilities;
 
-import static io.restassured.RestAssured.given;
+import io.restassured.RestAssured;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -27,7 +27,7 @@ public class PortMonitor {
 		Response response;
 
 		String query = "https://ndf-test-cleanup.kubeodc-test.corp.intranet/getUnidata/" + uni;
-		response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(query)
+		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(query)
 				.then().extract().response();
 
 		int statCode = response.getStatusCode();
@@ -86,46 +86,52 @@ public class PortMonitor {
 		Asri asri = new Asri();
 		ArrayList<String> cleanupUnis = new ArrayList<String>();
 		ArrayList<String> validatedUnis = new ArrayList<String>();
-//        cleanupUnis = pm.fetchUnisFromDb("CO/KXFN/048253/LUMN");
-		String device = "LABBRMCOW2302";
-		ArrayList<String> uniList = rubicon.fetchUnisFromDevice(device);
-		System.out.println("+------------------List of UNIs on Device::" + device + "------------------------+");
-		for (String uni : uniList) {
-			System.out.println(uni);
-		}
-		System.out.println("===============================================================================");
 
-		for (int i = 1; i < uniList.size(); i++) {
-			cleanupUnis = pm.validateUniForCleanup(uniList.get(i));
-//			System.out.println("UNI: " + uniList.get(i));
-			if (cleanupUnis.size() > 0) {
-				validatedUnis.add(uniList.get(i));
-			}
-		}
-
-		// print the validated UNIs
-		System.out.println("+---------------VALIDATED UNIs-------------------+");
-		for (String unis : validatedUnis) {
-			System.out.println(unis);
-		}
-		System.out.println("===============================================================================");
-
-		for (String unis : validatedUnis) {
-			System.out.println("############################################################################");
-			System.out.println("Cleanup Started for::" + unis);
-			ArrayList<String> envs = asri.getServiceEnvironment(unis);
-
-			if (envs.size() == 0) {
-				System.out.println(unis + "::No Environment found");
-				cleanPortsViaPortMonitorData(unis, "1");
-			} else if (envs.size() > 0) {
-				for (String env : envs) {
-					System.out.println(unis + "====>" + env);
-					cleanPortsViaPortMonitorData(unis, env);
+		// fetch devices from Rubicon
+		 ArrayList<String> devices = rubicon.listLabDevices();
+		 for (String device : devices) {
+			 	System.out.println("Device::"+device);
+				ArrayList<String> uniList = rubicon.fetchUnisFromDevice(device);
+				System.out.println("+------------------List of UNIs on Device::" + device + "------------------------+");
+				for (String uni : uniList) {
+					System.out.println(uni);
 				}
-			}
+				System.out.println("===============================================================================");
 
-		}
+				for (int i = 1; i < uniList.size(); i++) {
+					cleanupUnis = pm.validateUniForCleanup(uniList.get(i));
+					if (cleanupUnis.size() > 0) {
+						validatedUnis.add(uniList.get(i));
+					}
+				}
+
+				// print the validated UNIs
+				System.out.println("+------------------------------VALIDATED UNIs------------------------------------+");
+				for (String unis : validatedUnis) {
+					System.out.println(unis);
+				}
+				System.out.println("===============================================================================");
+
+				for (String unis : validatedUnis) {
+					System.out.println("############################################################################");
+					System.out.println("Cleanup Started for::" + unis);
+					ArrayList<String> envs = asri.getServiceEnvironment(unis);
+
+					if (envs.size() == 0) {
+						System.out.println(unis + "::No Environment found");
+						cleanPortsViaPortMonitorData(unis, "1");
+					} else if (envs.size() > 0) {
+						for (String env : envs) {
+							System.out.println(unis + "====>" + env);
+							cleanPortsViaPortMonitorData(unis, env);
+						}
+					}
+
+				}
+		 }
+		
+		
+
 //		updatePortMonitorIfUniNotUpdated("CO/KXFN/048399/LUMN");
 //		updateRecordAfterCleanup("CO/KXFN/048399/LUMN");CO/KXFN/048664/LUMN
 //		cleanPortsViaPortMonitorData("CO/KXFN/048664/LUMN", "4");
@@ -278,7 +284,7 @@ public class PortMonitor {
 
 		Response response;
 		String query = "https://sasi-test1.kubeodc-test.corp.intranet/inventory/v1/asri/services?name=" + uni;
-		response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(query)
+		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(query)
 				.then().extract().response();
 
 		int statCode = response.getStatusCode();
@@ -289,7 +295,7 @@ public class PortMonitor {
 			triggerUpdateDbApi(getSasiDetails(response, environment));
 		} else {
 			query = "https://sasi-test2.kubeodc-test.corp.intranet/inventory/v1/asri/services?name=" + uni;
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 					.get(query).then().extract().response();
 			statCode = response.getStatusCode();
 			if (statCode == 200) {
@@ -299,7 +305,7 @@ public class PortMonitor {
 				triggerUpdateDbApi(getSasiDetails(response, environment));
 			} else {
 				query = "https://sasi-test4.kubeodc-test.corp.intranet/inventory/v1/asri/services?name=" + uni;
-				response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+				response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 						.get(query).then().extract().response();
 				statCode = response.getStatusCode();
 				if (statCode == 200) {
@@ -388,7 +394,7 @@ public class PortMonitor {
 				+ "\",\r\n" + "    \"cleanup_date\": \"" + sasiDetails.split(",")[10] + "\"\r\n" + "}";
 
 //        make a post call to update the db
-		response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().body(jsonBody)
+		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().body(jsonBody)
 				.when().post(query).then().extract().response();
 
 		int statCode = response.getStatusCode();
@@ -409,7 +415,7 @@ public class PortMonitor {
 
 		Response response;
 		String query = "https://ndf-test-cleanup.kubeodc-test.corp.intranet/getUnidata/" + uni;
-		response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(query)
+		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(query)
 				.then().extract().response();
 
 		int statCode = response.getStatusCode();
@@ -444,7 +450,7 @@ public class PortMonitor {
 
 		// update the record
 		String updateQuery = "https://ndf-test-cleanup.kubeodc-test.corp.intranet/updateUnidetailsInDb";
-		response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and()
+		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and()
 				.body(modifiedPayload).when().post(updateQuery).then().extract().response();
 
 		statCode = response.getStatusCode();

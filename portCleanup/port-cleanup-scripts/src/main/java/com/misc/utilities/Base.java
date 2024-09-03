@@ -48,6 +48,8 @@ public class Base {
 	public static String RUBICON_CHECKPORTS_URL = "";
 	public static String username = "AC70068";
 	public static String password = "Arshi1994#";
+	public static String usernameRubicon = "naas";
+	public static String passwordRubicon = "Ve3Rrj6H8kvf";
 
 	public Base() {
 		configMethod();

@@ -1,6 +1,6 @@
 package com.asri.utilities;
 
-import static io.restassured.RestAssured.given;
+import io.restassured.RestAssured;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,7 +37,7 @@ public class Asri {
 		ArrayList<String> envCountList = new ArrayList<String>();
 
 		for (String env : envList) {
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(env)
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(env)
 					.then().extract().response();
 			sasiRes = response.asString();
 
@@ -82,17 +82,17 @@ public class Asri {
 
 		if (environment.contains("1")) {
 			autopilot.environment = "1";
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 					.get(base.TEST1_SASI_ASRI + service).then().extract().response();
 			sasiRes = response.asString();
 		} else if (environment.contains("2")) {
 			autopilot.environment = "2";
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 					.get(base.TEST2_SASI_ASRI + service).then().extract().response();
 			sasiRes = response.asString();
 		} else if (environment.contains("4")) {
 			autopilot.environment = "4";
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 					.get(base.TEST4_SASI_ASRI + service).then().extract().response();
 			sasiRes = response.asString();
 		}
@@ -145,17 +145,17 @@ public class Asri {
 
 		if (environment.contains("1")) {
 			autopilot.environment = "1";
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 					.get(base.TEST1_SASI_ASRI + service).then().extract().response();
 			sasiRes = response.asString();
 		} else if (environment.contains("2")) {
 			autopilot.environment = "2";
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 					.get(base.TEST2_SASI_ASRI + service).then().extract().response();
 			sasiRes = response.asString();
 		} else if (environment.contains("4")) {
 			autopilot.environment = "4";
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 					.get(base.TEST4_SASI_ASRI + service).then().extract().response();
 			sasiRes = response.asString();
 		}
@@ -591,7 +591,7 @@ public class Asri {
 		System.out.println("==============================================IP CLEANUP START=================================================");
 		boolean isIpCleaned = false;
 		String resolvedIpUrl =  Test_Get_IPs + serviceID;
-		String iPResBody = given().relaxedHTTPSValidation().get(resolvedIpUrl).body().asString();
+		String iPResBody = RestAssured.given().relaxedHTTPSValidation().get(resolvedIpUrl).body().asString();
 		ArrayList<String> ipList = JsonPath.read(iPResBody, "$..ipBlock..cidrRange");
 		if (ipList.size() > 0) {
 			System.out.println("IPs Found!!\nNumber of IPs occupied by " + serviceID + " is::" + ipList.size());
@@ -600,7 +600,7 @@ public class Asri {
 				String ipReleasePayload = "{\r\n" + "    \"circuitId\" : \"" + serviceID + "\",\r\n"
 						+ "    \"cidrRange\" : \"" + ip + "\"\r\n" + "}";
 				System.out.println(ipReleasePayload);
-				String ipReleaseResponse = given().relaxedHTTPSValidation().header("Content-type", "application/json")
+				String ipReleaseResponse = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json")
 						.and().body(ipReleasePayload).when().post(Test_IP_Release).then().extract().response()
 						.asString();
 				System.out.println(ipReleaseResponse);

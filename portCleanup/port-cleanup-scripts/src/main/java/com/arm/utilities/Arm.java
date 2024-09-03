@@ -1,6 +1,6 @@
 package com.arm.utilities;
 
-import static io.restassured.RestAssured.given;
+import io.restassured.RestAssured;
 import java.util.ArrayList;
 import com.misc.utilities.Base;
 import io.restassured.response.Response;
@@ -27,7 +27,7 @@ public class Arm {
 		ArrayList<String> envCountList = new ArrayList<String>();
 
 		for (String env : envList) {
-			response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(env)
+			response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when().get(env)
 					.then().extract().response();
 			sasiRes = response.asString();
 

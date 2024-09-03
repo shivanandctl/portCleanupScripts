@@ -1,6 +1,6 @@
 package com.arm.utilities;
 
-import static io.restassured.RestAssured.given;
+import io.restassured.RestAssured;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,7 +44,7 @@ public class OmniVue {
 			sasiArmUrl = base.TEST4_SASI_ARM;
 		}
 
-		deviceIdResponse = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+		deviceIdResponse = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
 				.get(sasiArmUrl.replace("services", "devices") + device).then().extract().response();
 		String deviceIdResponseString = deviceIdResponse.asString();
 		ArrayList<String> deviceId = JsonPath.read(deviceIdResponse.asString(), "$..id");
@@ -60,7 +60,7 @@ public class OmniVue {
 				+ "    \"param\": {\r\n" + "        \"deviceID\": " + devId + ",\r\n" + "        \"deviceName\": \""
 				+ device + "\",\r\n" + "        \"isEthernetDevice\": true\r\n" + "    }\r\n" + "}";
 
-		response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().body(payload)
+		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().body(payload)
 				.when().post(postUrl).then().extract().response();
 
 		ArrayList<String> portNum = JsonPath.read(response.asString(), "$..PORT");

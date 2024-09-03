@@ -1,6 +1,6 @@
 package com.act.utilities;
 
-import static io.restassured.RestAssured.given;
+import io.restassured.RestAssured;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,8 +19,8 @@ public class Rubicon {
 	// List of Lab Devices
 	public ArrayList<String> listLabDevices() {
 		ArrayList<String> labDevices = new ArrayList<String>();
-//		labDevices.add("LABBRMCOW2212");
-//		labDevices.add("LABBRMCOW2213");
+		labDevices.add("LABBRMCOW2212");
+		labDevices.add("LABBRMCOW2213");
 		labDevices.add("LABBRMCOW2310");
 		labDevices.add("LABBRMCOW2311");
 		labDevices.add("LABBRMCOYP301");
@@ -29,6 +29,10 @@ public class Rubicon {
 		labDevices.add("LABBRMCOYJ304");
 		labDevices.add("LABBRMCOZN301");
 		labDevices.add("LABBRMCOW2302");
+		labDevices.add("LABBRMCOZG009");
+		labDevices.add("LABBRMCOZP307");
+		labDevices.add("LABBRMCO5M301");
+		labDevices.add("LABBRMCO5M302");
 		return labDevices;
 	}
 
@@ -38,15 +42,19 @@ public class Rubicon {
 		uniList.clear();
 		uniList.add(device);
 		
-		String username = base.username;
-		String password = base.password;
+		String usernameRubicon = base.usernameRubicon;
+		String passwordRubicon = base.passwordRubicon;
 
 		// read from environment.properties file
 		String rubiconURL = base.RUBICON_INT_DESCRIPTION_URL + device;
 		Response response;
 
-		response = given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
-				.get(rubiconURL).then().extract().response();
+//		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().when()
+//				.get(rubiconURL).then().extract().response();
+//		String rubRes = response.asString();
+		
+		response = RestAssured.given().relaxedHTTPSValidation().header("Content-type", "application/json").and().auth()
+			.basic(usernameRubicon, passwordRubicon).when().get(rubiconURL).then().extract().response();
 		String rubRes = response.asString();
 		
 		response.getStatusLine();
@@ -89,6 +97,11 @@ public class Rubicon {
 		ArrayList<String> uniList_LABBRMCOYJ304 = new ArrayList<String>();
 		ArrayList<String> uniList_LABBRMCOZN301 = new ArrayList<String>();
 		ArrayList<String> uniList_LABBRMCOW2302 = new ArrayList<String>();
+		ArrayList<String> uniList_LABBRMCOZG009 = new ArrayList<String>();
+		ArrayList<String> uniList_LABBRMCOZP307 = new ArrayList<String>();
+		ArrayList<String> uniList_LABBRMCO5M301 = new ArrayList<String>();
+		ArrayList<String> uniList_LABBRMCO5M302 = new ArrayList<String>();
+		
 
 		for (String device : rubicon.listLabDevices()) {
 			
@@ -132,7 +145,23 @@ public class Rubicon {
 				System.out.println("Fetching UNIs on " + device);
 				uniList_LABBRMCOW2302 = rubicon.fetchUnisFromDevice(device);
 				uniListAllDevices.add(uniList_LABBRMCOW2302);
-			}
+			}else if (device.contains("LABBRMCOZG009")) {
+				System.out.println("Fetching UNIs on " + device);
+				uniList_LABBRMCOZG009 = rubicon.fetchUnisFromDevice(device);
+				uniListAllDevices.add(uniList_LABBRMCOZG009);
+			} else if (device.contains("LABBRMCOZP307")) {
+				System.out.println("Fetching UNIs on " + device);
+				uniList_LABBRMCOZP307 = rubicon.fetchUnisFromDevice(device);
+				uniListAllDevices.add(uniList_LABBRMCOZP307);
+			}else if (device.contains("LABBRMCO5M301")) {
+				System.out.println("Fetching UNIs on " + device);
+				uniList_LABBRMCO5M301 = rubicon.fetchUnisFromDevice(device);
+				uniListAllDevices.add(uniList_LABBRMCO5M301);
+			}else if (device.contains("LABBRMCO5M302")) {
+				System.out.println("Fetching UNIs on " + device);
+				uniList_LABBRMCO5M302 = rubicon.fetchUnisFromDevice(device);
+				uniListAllDevices.add(uniList_LABBRMCO5M302);
+			}			
 			else {
 				System.out.println("No UNI's found on " + device);
 			}

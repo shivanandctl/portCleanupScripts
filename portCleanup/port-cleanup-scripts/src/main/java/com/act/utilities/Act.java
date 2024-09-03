@@ -1,6 +1,6 @@
 package com.act.utilities;
 
-import static io.restassured.RestAssured.given;
+import io.restassured.RestAssured;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -152,7 +152,7 @@ public class Act {
 		try {
 			encodedAuth = Base64.encodeBase64(auth.getBytes("UTF-8"));
 			authHeader = new String(encodedAuth);
-			Response Test_response = given().relaxedHTTPSValidation().auth().preemptive().basic(base.username, base.password)
+			Response Test_response = RestAssured.given().relaxedHTTPSValidation().auth().preemptive().basic(base.username, base.password)
 					.header("authorization", authHeader).get(Test_authUrl);
 			Map<String, String> Test_cook = Test_response.cookies();
 
@@ -190,15 +190,15 @@ public class Act {
 		String actJsonResponse = null;
 
 		if (environment.contains("1")) {
-			actJsonResponse = given().cookies(cookiesMap.get(0)).when()
+			actJsonResponse = RestAssured.given().cookies(cookiesMap.get(0)).when()
 					.get("http://act-env1.idc1.level3.com:8081/ac-ip-rs-web/rs/view/default/data?q0=" + serviceAlias)
 					.body().asString();
 		} else if (environment.contains("2")) {
-			actJsonResponse = given().cookies(cookiesMap.get(0)).when()
+			actJsonResponse = RestAssured.given().cookies(cookiesMap.get(0)).when()
 					.get("http://act-env2.idc1.level3.com:8081/ac-ip-rs-web/rs/view/default/data?q0=" + serviceAlias)
 					.body().asString();
 		} else if (environment.contains("4")) {
-			actJsonResponse = given().cookies(cookiesMap.get(0)).when()
+			actJsonResponse = RestAssured.given().cookies(cookiesMap.get(0)).when()
 					.get("http://act-env4.idc1.level3.com:8081/ac-ip-rs-web/rs/view/default/data?q0=" + serviceAlias)
 					.body().asString();
 		}
@@ -259,8 +259,8 @@ public class Act {
 						innerServiceTypeName = (String) serviceType.get(0);
 						// if (reqType.equalsIgnoreCase(activity) &&
 						// reqComplete.equalsIgnoreCase("complete")) {
-						if (reqComplete.equalsIgnoreCase("complete")
-								&& innerServiceTypeName.equalsIgnoreCase(serviceTypeName)) {
+						if (reqComplete.equalsIgnoreCase("complete")&& innerServiceTypeName.equalsIgnoreCase(serviceTypeName)&& (reqType.equalsIgnoreCase("new")||reqType.equalsIgnoreCase("delete"))) {
+//						if (reqComplete.equalsIgnoreCase("complete")&& innerServiceTypeName.equalsIgnoreCase(serviceTypeName)) {
 							idNewRequest = JsonPath.read(jsonPrettyPrintString, "$..rows[" + i + "]..requestID");
 							if (idNewRequest.size() > 0) {
 								// System.out.println("Given input is of Type::"+serviceTypeName);
@@ -305,15 +305,15 @@ public class Act {
 		String header_identifier = null;
 
 		if (environment.contains("1")) {
-			actJsonResponse = given().when()
+			actJsonResponse = RestAssured.given().when()
 					.get("http://act-env1.idc1.level3.com:8081/ac-ip-rs-web/rs/requestPayload?requestID=" + requestId)
 					.body().asString();
 		} else if (environment.contains("2")) {
-			actJsonResponse = given().when()
+			actJsonResponse = RestAssured.given().when()
 					.get("http://act-env2.idc1.level3.com:8081/ac-ip-rs-web/rs/requestPayload?requestID=" + requestId)
 					.body().asString();
 		} else if (environment.contains("4")) {
-			actJsonResponse = given().when()
+			actJsonResponse = RestAssured.given().when()
 					.get("http://act-env4.idc1.level3.com:8081/ac-ip-rs-web/rs/requestPayload?requestID=" + requestId)
 					.body().asString();
 		}
